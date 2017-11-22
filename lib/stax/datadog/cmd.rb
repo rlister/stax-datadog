@@ -8,22 +8,11 @@ module Stax
         end
 
         def dashboard_description
-          'created by stax test2'
+          'created by stax'
         end
 
         def graph_definitions
-          [
-            {
-              definition: {
-                events: [],
-                requests: [
-                  {q: 'avg:system.mem.free{*}'}
-                ],
-                viz: :timeseries
-              },
-              title: 'Average Memory Free'
-            }
-          ]
+          []
         end
 
         def template_variables
