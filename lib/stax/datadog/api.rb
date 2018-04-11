@@ -11,6 +11,46 @@ module Stax
           @_client ||= Dogapi::Client.new(ENV['DATADOG_API_KEY'], ENV['DATADOG_APP_KEY'])
         end
 
+        def lists
+          @_lists ||= client.get_all_dashboard_lists[1]['dashboard_lists']
+        end
+
+        ## find all lists with name or id
+        def find_lists(x)
+          lists.select do |l|
+            (l['name'] == x) || (l['id'] == x)
+          end
+        end
+
+        def list_exists?(name)
+          !find_lists(name).empty?
+        end
+
+        ## create list, unless there is already a list with this name
+        def create_list(name)
+          client.create_dashboard_list(name) unless list_exists?(name)
+        end
+
+        def get_list(id)
+          handle_response(client.get_dashboard_list(id))
+        end
+
+        def get_list_items(id)
+          handle_response(client.get_items_of_dashboard_list(id))
+        end
+
+        def add_to_list(name, dashboards)
+          id = find_lists(name).first['id']
+          resp = client.add_items_to_dashboard_list(id, Array(dashboards))
+          handle_response(resp)
+        end
+
+        def delete_from_list(name, dashboards)
+          id = find_lists(name).first['id']
+          resp = client.delete_items_from_dashboard_list(id, Array(dashboards))
+          handle_response(resp)
+        end
+
         def dashboards
           @_dashboards ||= client.get_dashboards[1]['dashes']
         end

@@ -3,6 +3,12 @@ module Stax
     class Cmd < Base
 
       no_commands do
+
+        ## if this is defined, dashboard will be added to this list
+        def list_name
+          app_name
+        end
+
         def dashboard_name
           app_name + '-' + branch_name
         end
@@ -20,14 +26,28 @@ module Stax
         end
       end
 
+      desc 'list', 'dashboard list'
+      def list
+        Datadog::Api.find_lists(list_name).each do |list|
+          debug("Datadog list #{list['name']} (#{list['id']})")
+          print_table Datadog::Api.get_list_items(list['id']).fetch('dashboards', []).map { |d|
+            [d['title'], d['id'], d['modified']]
+          }
+        end
+      end
+
       desc 'create', 'create dashboard'
       def create
-        Datadog::Api.create_dashboard(
+        id = Datadog::Api.create_dashboard(
           dashboard_name,
           dashboard_description,
           graph_definitions,
           template_variables,
         )
+        if id && list_name
+          Datadog::Api.create_list(list_name)
+          Datadog::Api.add_to_list(list_name, [{type: :custom_timeboard, id: id}])
+        end
       end
 
       desc 'update', 'update dashboard'
