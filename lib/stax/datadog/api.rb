@@ -27,8 +27,11 @@ module Stax
         end
 
         def handle_response(resp)
-          unless resp[0].match(/^2\d\d$/)
+          if resp[0].match(/^2\d\d$/)
+            resp[1]
+          else
             warn(resp[1].fetch('errors', 'datadog error'))
+            nil
           end
         end
 
