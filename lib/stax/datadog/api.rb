@@ -39,7 +39,7 @@ module Stax
           if dashboard_exists?(args[0])
             warn("Dashboard #{args[0]} already exists")
           else
-            handle_response(client.create_dashboard(*args))
+            handle_response(client.create_dashboard(*args)).dig('dash', 'id')
           end
         end
 
