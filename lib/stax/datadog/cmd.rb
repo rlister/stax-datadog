@@ -38,16 +38,17 @@ module Stax
 
       desc 'create', 'create dashboard'
       def create
+        ## create dashboard
         id = Datadog::Api.create_dashboard(
           dashboard_name,
           dashboard_description,
           graph_definitions,
           template_variables,
         )
-        if id && list_name
-          Datadog::Api.create_list(list_name)
-          Datadog::Api.add_to_list(list_name, [{type: :custom_timeboard, id: id}])
-        end
+
+        ## add it to list (create as needed)
+        list = Datadog::Api.create_or_get_list(list_name)
+        Datadog::Api.add_to_list(list['id'], [{type: :custom_timeboard, id: id}])
       end
 
       desc 'update', 'update dashboard'

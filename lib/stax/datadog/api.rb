@@ -12,7 +12,7 @@ module Stax
         end
 
         def lists
-          @_lists ||= client.get_all_dashboard_lists[1]['dashboard_lists']
+          handle_response(client.get_all_dashboard_lists)['dashboard_lists']
         end
 
         ## find all lists with name or id
@@ -27,8 +27,9 @@ module Stax
         end
 
         ## create list, unless there is already a list with this name
-        def create_list(name)
-          client.create_dashboard_list(name) unless list_exists?(name)
+        def create_or_get_list(name)
+          list = find_lists(name)&.first || handle_response(client.create_dashboard_list(name))
+          get_list(list['id'])
         end
 
         def get_list(id)
@@ -39,14 +40,12 @@ module Stax
           handle_response(client.get_items_of_dashboard_list(id))
         end
 
-        def add_to_list(name, dashboards)
-          id = find_lists(name).first['id']
+        def add_to_list(id, dashboards)
           resp = client.add_items_to_dashboard_list(id, Array(dashboards))
           handle_response(resp)
         end
 
-        def delete_from_list(name, dashboards)
-          id = find_lists(name).first['id']
+        def delete_from_list(id, dashboards)
           resp = client.delete_items_from_dashboard_list(id, Array(dashboards))
           handle_response(resp)
         end
