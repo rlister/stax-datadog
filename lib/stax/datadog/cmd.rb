@@ -38,7 +38,7 @@ module Stax
 
       desc 'create', 'create dashboard'
       def create
-        ## create dashboard
+        debug("Creating datadog dashboard #{dashboard_name}")
         id = Datadog::Api.create_dashboard(
           dashboard_name,
           dashboard_description,
@@ -53,6 +53,7 @@ module Stax
 
       desc 'update', 'update dashboard'
       def update
+        debug("Updating datadog dashboard #{dashboard_name}")
         Datadog::Api.update_dashboard(
           dashboard_name,
           dashboard_description,
@@ -64,6 +65,7 @@ module Stax
       desc 'delete [TITLE/ID]', 'delete timeboards'
       def delete(title_or_id = nil)
         if yes?("Delete dashboards with name #{dashboard_name}?", :yellow)
+          debug("Deleting datadog dashboard #{dashboard_name}")
           Datadog::Api.delete_dashboards(dashboard_name)
         end
       end
