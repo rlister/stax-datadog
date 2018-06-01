@@ -7,7 +7,6 @@ module Stax
       class << self
 
         def client
-          check_env('DATADOG_API_KEY', 'DATADOG_APP_KEY')
           @_client ||= Dogapi::Client.new(ENV['DATADOG_API_KEY'], ENV['DATADOG_APP_KEY'])
         rescue RuntimeError => e
           abort("Stax::Datadog: #{e.message}")
