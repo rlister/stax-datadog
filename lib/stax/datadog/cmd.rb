@@ -3,7 +3,6 @@ module Stax
     class Cmd < Base
 
       no_commands do
-
         ## if this is defined, dashboard will be added to this list
         def list_name
           app_name
