@@ -6,8 +6,17 @@ module Stax
     class Api
       class << self
 
+        ## override to set these values in a different way, eg from SSM param store
+        def datadog_api_key
+          ENV['DATADOG_API_KEY']
+        end
+
+        def datadog_app_key
+          ENV['DATADOG_APP_KEY']
+        end
+
         def client
-          @_client ||= Dogapi::Client.new(ENV['DATADOG_API_KEY'], ENV['DATADOG_APP_KEY'])
+          @_client ||= Dogapi::Client.new(datadog_api_key, datadog_app_key)
         rescue RuntimeError => e
           abort("Stax::Datadog: #{e.message}")
         end
